@@ -28,10 +28,13 @@ class TimerActivity : AppCompatActivity() {
     private var startTime: Long = 0
     private var elapsedTime: Long = 0
     private var isRunning = false
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
     private var taskId: Long = 0
     private var totalElapsedTime: Long = 0
+    private val notificationUpdateInterval = 60000L
+
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+
 
     private val handler = Handler(Looper.getMainLooper())
     private val runnable = object : Runnable {
@@ -39,10 +42,12 @@ class TimerActivity : AppCompatActivity() {
             if (isRunning) {
                 elapsedTime = System.currentTimeMillis() - startTime
                 updateTimerText()
+                updateNotificationIfNeeded()
                 handler.postDelayed(this, 1000)
             }
         }
     }
+
 
     private val CHANNEL_ID = "task_timer_channel"
 
@@ -91,6 +96,7 @@ class TimerActivity : AppCompatActivity() {
 
         elapsedTime = 0
         updateTimerText()
+        updateNotification() // Final update when stopping
         handler.removeCallbacks(runnable)
 
         val intent = Intent()
@@ -102,7 +108,12 @@ class TimerActivity : AppCompatActivity() {
 
     private fun updateTimerText() {
         timerTextView.text = formatElapsedTime(elapsedTime)
-        updateNotification() // Update notification with current elapsed time
+        // Remove the updateNotification() call from here
+    }
+    private fun updateNotificationIfNeeded() {
+        if (elapsedTime % notificationUpdateInterval < 1000) {
+            updateNotification()
+        }
     }
 
     private fun updateTotalTimeText() {

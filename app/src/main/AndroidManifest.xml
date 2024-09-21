@@ -14,8 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PlanMate"
         tools:targetApi="31">
+        <activity
+            android:name=".ReminderActivity"
+            android:exported="false" />
+
         <receiver
-            android:name=".MyAppWidgetProvider"
+            android:name=".TaskWidgetProvider"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

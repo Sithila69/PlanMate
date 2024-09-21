@@ -1,36 +1,37 @@
 package com.planmate
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
-import android.content.Intent
 import android.widget.RemoteViews
+import org.json.JSONArray
 
-class MyAppWidgetProvider : AppWidgetProvider() {
+class TaskWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         for (appWidgetId in appWidgetIds) {
-            updateWidget(context, appWidgetManager, appWidgetId)
+            updateAppWidget(context, appWidgetManager, appWidgetId)
         }
     }
 
-    private fun updateWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+    private fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+        val sharedPreferences = context.getSharedPreferences("TaskPrefs", Context.MODE_PRIVATE)
+        val taskJsonString = sharedPreferences.getString("tasks", null)
         val views = RemoteViews(context.packageName, R.layout.widget_layout)
 
-        // Example: Update widget text
-        val taskTitle = getTaskTitleFromPreferences(context)
-        views.setTextViewText(R.id.widgetTextView, taskTitle)
+        if (!taskJsonString.isNullOrEmpty()) {
+            val taskJsonArray = JSONArray(taskJsonString)
+            val taskList = StringBuilder()
 
-        // Handle button click
-        val intent = Intent(context, TimerActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        views.setOnClickPendingIntent(R.id.widgetButton, pendingIntent)
+            for (i in 0 until minOf(taskJsonArray.length(), 3)) {
+                val taskObject = taskJsonArray.getJSONObject(i)
+                taskList.append("• ${taskObject.getString("title")}\n")
+            }
+
+            views.setTextViewText(R.id.widget_task_list, taskList.toString())
+        } else {
+            views.setTextViewText(R.id.widget_task_list, "No tasks")
+        }
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
-    }
-
-    private fun getTaskTitleFromPreferences(context: Context): String {
-        val sharedPreferences = context.getSharedPreferences("TaskPrefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("task_title_key", "No Task") ?: "No Task"
     }
 }

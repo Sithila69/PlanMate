@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:layout_marginBottom="32dp"/>
     <TextView
         android:id="@+id/timerTextView"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:layout_marginBottom="32dp"/>
     <TextView
         android:id="@+id/totalTimeTextView"
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:layout_marginBottom="32dp"/>
 
     <!-- Start/Stop Timer Button -->
@@ -45,6 +45,11 @@
         android:padding="16dp"
         android:layout_gravity="center"/>
 
-    <!-- You can add more UI elements here if needed -->
+    <Button
+        android:id="@+id/setReminderButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/set_reminder" />
 
 </LinearLayout>

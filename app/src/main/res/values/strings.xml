@@ -9,4 +9,10 @@
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>
     <string name="total_time">Total time:</string>
+    <string name="reminder_title">Reminder Title</string>
+    <string name="enter_reminder_title">Enter reminder title</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="set_reminder">Set Reminder</string>
+    <string name="set_reminder_alarm">Set Reminder</string>
 </resources>
