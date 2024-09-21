@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">PlanMate</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="enter_task_description">Enter Task Description</string>
+    <string name="enter_task_title">Enter Task Title</string>
+    <string name="add_task">Add Task</string>
 </resources>
