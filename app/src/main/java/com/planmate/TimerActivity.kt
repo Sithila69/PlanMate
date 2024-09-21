@@ -2,21 +2,30 @@ package com.planmate
 
 import Task
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.icu.text.SimpleDateFormat
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.os.Handler
 import android.os.Build
 import android.os.Looper
 import android.widget.Button
+import android.widget.DatePicker
 import android.widget.TextView
+import android.widget.TimePicker
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import org.json.JSONObject
+import java.util.Date
+import java.util.Locale
 
 class TimerActivity : AppCompatActivity() {
 
@@ -32,6 +41,7 @@ class TimerActivity : AppCompatActivity() {
     private var totalElapsedTime: Long = 0
     private val notificationUpdateInterval = 60000L
 
+    private lateinit var setReminderButton: Button
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
 
@@ -76,8 +86,58 @@ class TimerActivity : AppCompatActivity() {
                 startTimer()
             }
         }
+        setReminderButton = findViewById(R.id.setReminderButton)
+        setReminderButton.setOnClickListener {
+            showReminderDialog()
+        }
     }
 
+    private fun showReminderDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_reminder, null)
+        val datePicker = dialogView.findViewById<DatePicker>(R.id.datePicker)
+        val timePicker = dialogView.findViewById<TimePicker>(R.id.timePicker)
+
+        AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setTitle("Set Reminder")
+            .setPositiveButton("Set") { _, _ ->
+                val year = datePicker.year
+                val month = datePicker.month
+                val day = datePicker.dayOfMonth
+                val hour = timePicker.hour
+                val minute = timePicker.minute
+
+                setReminder(year, month, day, hour, minute)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+    private fun setReminder(year: Int, month: Int, day: Int, hour: Int, minute: Int) {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year)
+            set(Calendar.MONTH, month)
+            set(Calendar.DAY_OF_MONTH, day)
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+        }
+
+        val intent = Intent(this, ReminderReceiver::class.java).apply {
+            putExtra("taskId", taskId)
+            putExtra("taskTitle", taskTitleTextView.text)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            taskId.toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+
+        Toast.makeText(this, "Reminder set for ${formatDate(calendar.time)}", Toast.LENGTH_LONG).show()
+    }
     private fun startTimer() {
         startTime = System.currentTimeMillis()
         isRunning = true
@@ -179,6 +239,11 @@ class TimerActivity : AppCompatActivity() {
         val minutes = seconds / 60
         val hours = minutes / 60
         return String.format("%02d:%02d:%02d", hours, minutes % 60, seconds % 60)
+    }
+
+    private fun formatDate(date: Date): String {
+        val format = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+        return format.format(date)
     }
 
     override fun onDestroy() {

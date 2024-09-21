@@ -4,13 +4,16 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.TimePicker
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
+import android.provider.Settings
 
 class ReminderActivity : AppCompatActivity() {
     private lateinit var titleEditText: EditText
@@ -32,6 +35,7 @@ class ReminderActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun scheduleReminder() {
         val title = titleEditText.text.toString()
         val calendar = Calendar.getInstance().apply {
@@ -54,7 +58,24 @@ class ReminderActivity : AppCompatActivity() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        // For Android 12 (API level 31) and higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (alarmManager.canScheduleExactAlarms()) {
+                try {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+                } catch (e: SecurityException) {
+                    e.printStackTrace()
+                    // Handle the SecurityException
+                }
+            } else {
+                // Open settings to request exact alarm permission
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                startActivity(intent)
+            }
+        } else {
+            // For Android versions below 12, just set the alarm
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        }
 
         // Return to MainActivity
         finish()
