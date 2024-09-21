@@ -33,6 +33,16 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    sourceSets {
+        getByName("main") {
+            java {
+                srcDirs("src\\main\\java", "src\\main\\java\\model",
+                    "src\\main\\java",
+                    "src\\main\\java\\TaskAdapter"
+                )
+            }
+        }
+    }
 }
 
 dependencies {
