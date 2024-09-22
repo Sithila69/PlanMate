@@ -3,5 +3,6 @@ data class Task(
     var title: String,
     var description: String,
     var isCompleted: Boolean,
-    var elapsedTime: Long = 0
+    var elapsedTime: Long = 0,
+    var dueDate: String
 )
