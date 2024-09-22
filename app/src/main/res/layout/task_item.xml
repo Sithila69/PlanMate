@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:ellipsize="end"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@color/black" />
         <TextView
             android:id="@+id/totalTimeTextView"
             android:layout_width="match_parent"
@@ -51,6 +51,7 @@
 
         <!-- Button Container -->
         <LinearLayout
+            style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -59,6 +60,7 @@
             <!-- Edit Button -->
             <Button
                 android:id="@+id/editButton"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -70,6 +72,7 @@
             <!-- Delete Button -->
             <Button
                 android:id="@+id/deleteButton"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="PlanMate"
+        android:text="@string/app_name"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="16dp" />
@@ -49,7 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="Select Due Date">
+        android:hint="@string/select_due_date">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/dueDateInput"
