@@ -15,4 +15,7 @@
     <string name="time">Time</string>
     <string name="set_reminder">Set Reminder</string>
     <string name="set_reminder_alarm">Set Reminder</string>
+    <string name="add_task_2">Add Task</string>
+    <string name="update_task">Update Task</string>
+    <string name="select_due_date">select_due_date</string>
 </resources>
