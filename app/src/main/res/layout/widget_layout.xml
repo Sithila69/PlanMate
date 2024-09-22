@@ -4,13 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#FFFFFF">
+    android:background="@color/white">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upcoming Tasks"
+        android:text="@string/upcoming_tasks"
         android:textStyle="bold"
+        android:textColor="@color/black"
         android:textSize="18sp"
         android:layout_marginBottom="8dp"/>
 
@@ -18,7 +19,8 @@
         android:id="@+id/widget_task_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No tasks"
+        android:text="@string/no_tasks"
+        android:textColor="@color/black"
         android:textSize="14sp"/>
 
 </LinearLayout>

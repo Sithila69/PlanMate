@@ -3,6 +3,8 @@ package com.planmate
 import Task
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
 import android.icu.util.Calendar
@@ -102,6 +104,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Save tasks to SharedPreferences after adding or updating
                 saveTasksToPreferences(tasks)
+                updateWidget() // Notify the widget to update
 
                 // Notify adapter to update the RecyclerView with new data
                 taskAdapter.notifyDataSetChanged()
@@ -145,6 +148,7 @@ class MainActivity : AppCompatActivity() {
     private fun deleteTask(task: Task) {
         tasks.remove(task) // Remove task from list
         saveTasksToPreferences(tasks) // Save updated tasks to SharedPreferences
+        updateWidget() // Notify the widget to update
         taskAdapter.notifyDataSetChanged() // Notify adapter to refresh the list
     }
 
@@ -210,6 +214,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return tasks
+    }
+
+    // Function to update the widget
+    private fun updateWidget() {
+        val intent = Intent(this, TaskWidgetProvider::class.java)
+        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        val ids = AppWidgetManager.getInstance(this)
+            .getAppWidgetIds(ComponentName(this, TaskWidgetProvider::class.java))
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        sendBroadcast(intent)
     }
 
     // Override to handle activity results, specifically for the timer activity
