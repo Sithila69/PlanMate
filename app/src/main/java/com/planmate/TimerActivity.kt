@@ -33,6 +33,8 @@ class TimerActivity : AppCompatActivity() {
     private lateinit var startButton: Button
     private lateinit var totalTimeTextView: TextView
     private lateinit var timerTextView: TextView
+    private lateinit var taskDescriptionTextView: TextView
+
 
     private var startTime: Long = 0
     private var elapsedTime: Long = 0
@@ -66,14 +68,23 @@ class TimerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_timer)
 
         taskTitleTextView = findViewById(R.id.taskTitleTextView)
+        taskDescriptionTextView = findViewById(R.id.taskDescriptionTextView) // Initialize description TextView
         startButton = findViewById(R.id.startButton)
         totalTimeTextView = findViewById(R.id.totalTimeTextView)
         timerTextView = findViewById(R.id.timerTextView)
 
+        // Retrieve task ID, title, and description from the intent
+        taskId = intent.getLongExtra("taskId", 0)
+        val taskTitle = intent.getStringExtra("taskTitle") ?: "Task Title"
+        val taskDescription = intent.getStringExtra("taskDescription") ?: "Task Description"
+
+        // Set the title and description in the UI
+        taskTitleTextView.text = taskTitle
+        taskDescriptionTextView.text = taskDescription // Set the description
+
         sharedPreferences = getSharedPreferences("TaskPrefs", MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
-        taskId = intent.getLongExtra("taskId", 0)
         totalElapsedTime = loadElapsedTimeFromPreferences(taskId)
 
         updateTotalTimeText()
@@ -91,6 +102,7 @@ class TimerActivity : AppCompatActivity() {
             showReminderDialog()
         }
     }
+
 
     private fun showReminderDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_reminder, null)

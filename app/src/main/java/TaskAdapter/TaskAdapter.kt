@@ -18,9 +18,11 @@ class TaskAdapter(
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.taskTitle)
         val description: TextView = itemView.findViewById(R.id.taskDescription)
+        val dueDate: TextView = itemView.findViewById(R.id.dueDate) // New TextView for Due Date
         val editButton: Button = itemView.findViewById(R.id.editButton)
         val deleteButton: Button = itemView.findViewById(R.id.deleteButton)
         val elapsedTime: TextView = itemView.findViewById(R.id.totalTimeTextView)
+
         init {
             // Set click listener to open TimerActivity when the task item is clicked
             itemView.setOnClickListener {
@@ -42,6 +44,7 @@ class TaskAdapter(
         val task = tasks[position]
         holder.title.text = task.title
         holder.description.text = task.description
+        holder.dueDate.text = task.dueDate // Bind the due date
 
         // Set the elapsed time text
         holder.elapsedTime.text = formatElapsedTime(task.elapsedTime)
@@ -51,7 +54,6 @@ class TaskAdapter(
         holder.deleteButton.setOnClickListener { deleteTask(task) }
     }
 
-
     override fun getItemCount() = tasks.size
 
     private fun formatElapsedTime(time: Long): String {
@@ -60,5 +62,4 @@ class TaskAdapter(
         val displaySeconds = seconds % 60
         return String.format("%02d:%02d", minutes, displaySeconds)
     }
-
 }

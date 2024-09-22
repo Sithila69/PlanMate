@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
     private val timerActivityResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        // Handle the result of the timer activity
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
             val taskId = data?.getLongExtra("taskId", -1) ?: -1
@@ -87,31 +86,34 @@ class MainActivity : AppCompatActivity() {
             val description = taskDescriptionInput.text.toString()
             val dueDate = dueDateInput.text.toString()
 
-            if (editingTask != null) {
-                // If editing a task, update the task's title, description, and due date
-                editingTask?.title = title
-                editingTask?.description = description
-                editingTask?.dueDate = dueDate
-                editingTask = null // Clear editing state
-                addTaskButton.text = getString(R.string.add_task) // Reset button text
-            } else {
-                // Add a new task if no task is being edited
-                if (title.isNotEmpty()) {
+            if (title.isNotEmpty() && dueDate.isNotEmpty()) {
+                if (editingTask != null) {
+                    // If editing a task, update the task's title, description, and due date
+                    editingTask?.title = title
+                    editingTask?.description = description
+                    editingTask?.dueDate = dueDate
+                    editingTask = null // Clear editing state
+                    addTaskButton.text = getString(R.string.add_task) // Reset button text
+                } else {
+                    // Add a new task if no task is being edited
                     val newTask = Task(Random.nextLong(), title, description, false, dueDate = dueDate)
                     tasks.add(newTask) // Add new task to the list
                 }
+
+                // Save tasks to SharedPreferences after adding or updating
+                saveTasksToPreferences(tasks)
+
+                // Notify adapter to update the RecyclerView with new data
+                taskAdapter.notifyDataSetChanged()
+
+                // Clear input fields after adding/updating a task
+                taskTitleInput.text.clear()
+                taskDescriptionInput.text.clear()
+                dueDateInput.text?.clear() // Clear the due date input
+            } else {
+                // Optionally, show a message if title or due date is empty
+                // e.g., Toast.makeText(this, "Title and due date are required", Toast.LENGTH_SHORT).show()
             }
-
-            // Save tasks to SharedPreferences after adding or updating
-            saveTasksToPreferences(tasks)
-
-            // Notify adapter to update the RecyclerView with new data
-            taskAdapter.notifyDataSetChanged()
-
-            // Clear input fields after adding/updating a task
-            taskTitleInput.text.clear()
-            taskDescriptionInput.text.clear()
-            dueDateInput.text?.clear() // Clear the due date input
         }
     }
 
@@ -165,6 +167,8 @@ class MainActivity : AppCompatActivity() {
     private fun openTimerActivity(task: Task) {
         val intent = Intent(this, TimerActivity::class.java).apply {
             putExtra("taskId", task.id) // Pass the task ID to TimerActivity
+            putExtra("taskTitle", task.title) // Pass the task title
+            putExtra("taskDescription", task.description) // Pass the task description
         }
         timerActivityResultLauncher.launch(intent) // Launch TimerActivity
     }
@@ -207,7 +211,6 @@ class MainActivity : AppCompatActivity() {
         }
         return tasks
     }
-
 
     // Override to handle activity results, specifically for the timer activity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
