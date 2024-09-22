@@ -2,10 +2,18 @@ package com.planmate
 
 import Task
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.icu.text.SimpleDateFormat
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.os.Handler
+import android.os.Build
 import android.os.Looper
 import android.widget.Button
 import android.widget.DatePicker
@@ -14,8 +22,8 @@ import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import java.text.SimpleDateFormat
-import java.util.Calendar
+import androidx.core.app.NotificationCompat
+import org.json.JSONObject
 import java.util.Date
 import java.util.Locale
 
@@ -47,6 +55,9 @@ class TimerActivity : AppCompatActivity() {
         }
     }
 
+    private val CHANNEL_ID = "task_timer_channel"
+    private val NOTIFICATION_ID = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timer)
@@ -71,6 +82,7 @@ class TimerActivity : AppCompatActivity() {
         totalElapsedTime = loadElapsedTimeFromPreferences(taskId)
 
         updateTotalTimeText()
+        createNotificationChannel()
 
         startButton.setOnClickListener {
             if (isRunning) {
@@ -88,13 +100,16 @@ class TimerActivity : AppCompatActivity() {
     private fun startTimer() {
         startTime = System.currentTimeMillis()
         isRunning = true
-        startButton.text = "Stop Timer"
+        startButton.text = getString(R.string.stop_timer)
         handler.post(runnable)
+
+        // Create the notification when the timer starts
+        createTimerNotification()
     }
 
     private fun stopTimer() {
         isRunning = false
-        startButton.text = "Start Timer"
+        startButton.text = getString(R.string.stop_timer)
 
         totalElapsedTime += elapsedTime
         saveElapsedTimeToPreferences(taskId, totalElapsedTime)
@@ -103,6 +118,9 @@ class TimerActivity : AppCompatActivity() {
         elapsedTime = 0
         updateTimerText()
         handler.removeCallbacks(runnable)
+
+        // Cancel the notification when the timer stops
+        cancelNotification()
 
         val intent = Intent()
         intent.putExtra("taskId", taskId)
@@ -116,7 +134,49 @@ class TimerActivity : AppCompatActivity() {
     }
 
     private fun updateTotalTimeText() {
-        totalTimeTextView.text = "Total time: ${formatElapsedTime(totalElapsedTime)}"
+        totalTimeTextView.text =
+            getString(R.string.total_time_2, formatElapsedTime(totalElapsedTime))
+    }
+
+    // Create notification once when the timer starts
+    private fun createTimerNotification() {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val intent = Intent(this, TimerActivity::class.java).apply {
+            putExtra("taskId", taskId)
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_timer)
+            .setContentTitle("Timer Running for Task: ${taskTitleTextView.text}")
+            .setContentText("Timer started.")
+            .setContentIntent(pendingIntent)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setOngoing(true)
+            .build()
+
+        notificationManager.notify(NOTIFICATION_ID, notification)
+    }
+
+    // Cancel notification when timer stops
+    private fun cancelNotification() {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(NOTIFICATION_ID)
+    }
+
+    private fun createNotificationChannel() {
+        val channelName = "Task Timer Notifications"
+        val channelDescription = "Notifications for task timer"
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel(CHANNEL_ID, channelName, importance).apply {
+            description = channelDescription
+        }
+
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
     }
 
     private fun showReminderDialog() {
@@ -150,8 +210,20 @@ class TimerActivity : AppCompatActivity() {
             set(Calendar.SECOND, 0)
         }
 
-        // Here you would typically set up an AlarmManager to schedule the reminder
-        // For this example, we'll just show a toast message
+        val intent = Intent(this, ReminderReceiver::class.java).apply {
+            putExtra("taskId", taskId)
+            putExtra("taskTitle", taskTitleTextView.text)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            taskId.toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+
         Toast.makeText(this, "Reminder set for ${formatDate(calendar.time)}", Toast.LENGTH_LONG).show()
     }
 

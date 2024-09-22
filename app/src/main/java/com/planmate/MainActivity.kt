@@ -9,8 +9,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +25,7 @@ import kotlin.random.Random
 class MainActivity : AppCompatActivity() {
     // UI components and data structures
     private lateinit var taskRecyclerView: RecyclerView
+    private lateinit var noTasksTextView: TextView
     private val tasks = mutableListOf<Task>() // List to store tasks
     private lateinit var taskAdapter: TaskAdapter // Adapter to manage tasks in RecyclerView
     private lateinit var sharedPreferences: SharedPreferences // SharedPreferences for storing tasks
@@ -65,11 +68,15 @@ class MainActivity : AppCompatActivity() {
         // Load saved tasks from SharedPreferences into the tasks list
         tasks.addAll(loadTasksFromPreferences())
 
-        // Initialize RecyclerView and its adapter
+        // Initialize UI components
+        noTasksTextView = findViewById(R.id.noTasksTextView)
         taskRecyclerView = findViewById(R.id.taskListView)
         taskRecyclerView.layoutManager = LinearLayoutManager(this) // Set linear layout for list
         taskAdapter = TaskAdapter(tasks, { task -> deleteTask(task) }, { task -> editTask(task) }) { task -> openTimerActivity(task) }
         taskRecyclerView.adapter = taskAdapter
+
+        // Check if there are any tasks and update UI accordingly
+        updateNoTasksTextView()
 
         // UI references for task title, description, and due date input fields
         val taskTitleInput = findViewById<EditText>(R.id.taskTitleInput)
@@ -108,14 +115,12 @@ class MainActivity : AppCompatActivity() {
 
                 // Notify adapter to update the RecyclerView with new data
                 taskAdapter.notifyDataSetChanged()
+                updateNoTasksTextView() // Update visibility of the no tasks message
 
                 // Clear input fields after adding/updating a task
                 taskTitleInput.text.clear()
                 taskDescriptionInput.text.clear()
                 dueDateInput.text?.clear() // Clear the due date input
-            } else {
-                // Optionally, show a message if title or due date is empty
-                // e.g., Toast.makeText(this, "Title and due date are required", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -150,6 +155,7 @@ class MainActivity : AppCompatActivity() {
         saveTasksToPreferences(tasks) // Save updated tasks to SharedPreferences
         updateWidget() // Notify the widget to update
         taskAdapter.notifyDataSetChanged() // Notify adapter to refresh the list
+        updateNoTasksTextView() // Update visibility of the no tasks message
     }
 
     // Function to edit a task, pre-populating input fields with task data
@@ -214,6 +220,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return tasks
+    }
+
+    // Function to update the visibility of the "No tasks available" TextView
+    private fun updateNoTasksTextView() {
+        if (tasks.isEmpty()) {
+            noTasksTextView.visibility = View.VISIBLE
+            taskRecyclerView.visibility = View.GONE
+        } else {
+            noTasksTextView.visibility = View.GONE
+            taskRecyclerView.visibility = View.VISIBLE
+        }
     }
 
     // Function to update the widget

@@ -15,16 +15,14 @@ class ReminderReceiver : BroadcastReceiver() {
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "REMINDER_CHANNEL",
-                "Task Reminders",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Notifications for task reminders"
-            }
-            notificationManager.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            "REMINDER_CHANNEL",
+            "Task Reminders",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Notifications for task reminders"
         }
+        notificationManager.createNotificationChannel(channel)
 
         val notification = NotificationCompat.Builder(context, "REMINDER_CHANNEL")
             .setSmallIcon(R.drawable.ic_notification)

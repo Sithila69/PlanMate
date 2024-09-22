@@ -79,5 +79,13 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:paddingTop="8dp" />
+    <TextView
+        android:id="@+id/noTasksTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_tasks_available"
+        android:visibility="gone"
+        android:gravity="center"/>
+
 
 </LinearLayout>
