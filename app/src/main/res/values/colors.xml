@@ -10,4 +10,6 @@
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
     <color name="colorBackground">#807D7D</color>
+    <color name="task_bg">#4D620694</color>
+    <color name="lightOrange">#D37C41</color>
 </resources>
