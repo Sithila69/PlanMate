@@ -1,37 +1,22 @@
 package com.planmate
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import androidx.core.app.NotificationCompat
+import android.util.Log
 
 class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        val taskId = intent.getLongExtra("taskId", 0)
-        val taskTitle = intent.getStringExtra("taskTitle") ?: "Task Reminder"
+        Log.d("ReminderReceiver", "Alarm triggered")
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        // Retrieve the task title from the intent
+        val taskTitle = intent.getStringExtra("taskTitle") ?: "Reminder"
 
-        val channel = NotificationChannel(
-            "REMINDER_CHANNEL",
-            "Task Reminders",
-            NotificationManager.IMPORTANCE_HIGH
-        ).apply {
-            description = "Notifications for task reminders"
+        // Launch AlarmActivity
+        val alarmIntent = Intent(context, AlarmActivity::class.java).apply {
+            putExtra("taskTitle", taskTitle) // Pass the task title to AlarmActivity
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
-        notificationManager.createNotificationChannel(channel)
-
-        val notification = NotificationCompat.Builder(context, "REMINDER_CHANNEL")
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle("Task Reminder")
-            .setContentText("It's time for your task: $taskTitle")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
-            .build()
-
-        notificationManager.notify(taskId.toInt(), notification)
+        context.startActivity(alarmIntent)
     }
 }

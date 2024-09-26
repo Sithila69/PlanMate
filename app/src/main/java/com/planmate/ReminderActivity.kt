@@ -4,28 +4,36 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.DatePicker
-import android.widget.EditText
 import android.widget.TimePicker
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import java.util.*
+import android.widget.Toast
 import android.provider.Settings
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ReminderActivity : AppCompatActivity() {
-    private lateinit var titleEditText: EditText
     private lateinit var datePicker: DatePicker
     private lateinit var timePicker: TimePicker
     private lateinit var setReminderButton: Button
+
+    private var taskId: Long = 0
+    private lateinit var taskTitle: String
+    private lateinit var taskDescription: String
+    private lateinit var dueDate: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reminder)
 
-        titleEditText = findViewById(R.id.reminderTitleEditText)
+        // Retrieve task details from the intent
+        taskId = intent.getLongExtra("taskId", 0)
+        taskTitle = intent.getStringExtra("taskTitle") ?: "Task Title"
+        taskDescription = intent.getStringExtra("taskDescription") ?: "Task Description"
+        dueDate = intent.getStringExtra("dueDate") ?: "Due Date"
+
         datePicker = findViewById(R.id.datePicker)
         timePicker = findViewById(R.id.timePicker)
         setReminderButton = findViewById(R.id.setReminderButton)
@@ -35,9 +43,10 @@ class ReminderActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.S)
     private fun scheduleReminder() {
-        val title = titleEditText.text.toString()
+        // Use the task title directly for the reminder
+        val title = taskTitle
+
         val calendar = Calendar.getInstance().apply {
             set(Calendar.YEAR, datePicker.year)
             set(Calendar.MONTH, datePicker.month)
@@ -47,37 +56,46 @@ class ReminderActivity : AppCompatActivity() {
             set(Calendar.SECOND, 0)
         }
 
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (calendar.timeInMillis < System.currentTimeMillis()) {
+            Toast.makeText(this, "Please select a future date and time", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val intent = Intent(this, ReminderReceiver::class.java).apply {
-            putExtra("REMINDER_TITLE", title)
+            putExtra("taskId", taskId)
+            putExtra("taskTitle", taskTitle)
+            putExtra("reminderTitle", title) // Send the task title as the reminder title
         }
         val pendingIntent = PendingIntent.getBroadcast(
             this,
-            title.hashCode(),
+            taskId.toInt(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // For Android 12 (API level 31) and higher
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
-                try {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-                } catch (e: SecurityException) {
-                    e.printStackTrace()
-                    // Handle the SecurityException
-                }
-            } else {
-                // Open settings to request exact alarm permission
-                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-                startActivity(intent)
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        if (alarmManager.canScheduleExactAlarms()) {
+            try {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+                Toast.makeText(this, "Reminder set for $title", Toast.LENGTH_SHORT).show()
+            } catch (e: SecurityException) {
+                e.printStackTrace()
+                Toast.makeText(this, "Failed to set reminder. Permission required.", Toast.LENGTH_SHORT).show()
             }
         } else {
-            // For Android versions below 12, just set the alarm
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+            // Open settings to request exact alarm permission
+            val settingsIntent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+            startActivity(settingsIntent)
+            return
         }
 
-        // Return to MainActivity
+        // Return to previous activity
         finish()
+    }
+
+    private fun formatDate(date: Date): String {
+        val format = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+        return format.format(date)
     }
 }
