@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:padding="20sp"
         android:outlineProvider="background"
-        android:background="@color/soft_peach">
+        android:background="@color/white">
 
         <!-- Task Title -->
         <TextView
@@ -65,8 +65,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/edit"
-                android:backgroundTint="@color/Light_aqua"
-                android:textColor="@color/black"
+                android:backgroundTint="@color/black"
+                android:textColor="@color/white"
                 android:padding="8dp" />
 
             <!-- Delete Button -->

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/lavender"> <!-- Soft lavender background (#CDB2DC) -->
+    android:background="@color/white"> <!-- Soft lavender background (#CDB2DC) -->
 
     <!-- App Title -->
     <TextView
@@ -79,8 +79,8 @@
         android:text="@string/add_task"
         app:cornerRadius="8dp"
         style="@style/Widget.MaterialComponents.Button"
-        android:backgroundTint="@color/Light_mint"
-        android:textColor="@color/black"
+        android:backgroundTint="@color/black"
+        android:textColor="@color/white"
         android:layout_gravity="center" />
 
     <!-- RecyclerView to Display Tasks -->
