@@ -72,7 +72,13 @@ class MainActivity : AppCompatActivity() {
         noTasksTextView = findViewById(R.id.noTasksTextView)
         taskRecyclerView = findViewById(R.id.taskListView)
         taskRecyclerView.layoutManager = LinearLayoutManager(this) // Set linear layout for list
-        taskAdapter = TaskAdapter(tasks, { task -> deleteTask(task) }, { task -> editTask(task) }) { task -> openTimerActivity(task) }
+        taskAdapter = TaskAdapter(
+            this,  // Pass the Context (MainActivity is a Context)
+            tasks,
+            { task -> deleteTask(task) },
+            { task -> editTask(task) },
+            { task -> openTimerActivity(task) }
+        )
         taskRecyclerView.adapter = taskAdapter
 
         // Check if there are any tasks and update UI accordingly

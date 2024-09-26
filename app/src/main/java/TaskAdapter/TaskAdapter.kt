@@ -1,6 +1,7 @@
 package com.planmate
 
 import Task
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,22 +10,24 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class TaskAdapter(
+    private val context: Context,
     private val tasks: List<Task>,
     private val deleteTask: (Task) -> Unit,
     private val editTask: (Task) -> Unit,
     private val openTimerActivity: (Task) -> Unit
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
+    private val sharedPreferences = context.getSharedPreferences("TaskPrefs", Context.MODE_PRIVATE)
+
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.taskTitle)
         val description: TextView = itemView.findViewById(R.id.taskDescription)
-        val dueDate: TextView = itemView.findViewById(R.id.dueDate) // New TextView for Due Date
+        val dueDate: TextView = itemView.findViewById(R.id.dueDate)
         val editButton: Button = itemView.findViewById(R.id.editButton)
         val deleteButton: Button = itemView.findViewById(R.id.deleteButton)
         val elapsedTime: TextView = itemView.findViewById(R.id.totalTimeTextView)
 
         init {
-            // Set click listener to open TimerActivity when the task item is clicked
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
@@ -44,22 +47,26 @@ class TaskAdapter(
         val task = tasks[position]
         holder.title.text = task.title
         holder.description.text = task.description
-        holder.dueDate.text = task.dueDate // Bind the due date
+        holder.dueDate.text = task.dueDate
 
-        // Set the elapsed time text
-        holder.elapsedTime.text = formatElapsedTime(task.elapsedTime)
+        // Load the total elapsed time from SharedPreferences
+        val totalElapsedTime = loadElapsedTimeFromPreferences(task.id)
+        holder.elapsedTime.text = formatElapsedTime(totalElapsedTime)
 
-        // Set click listeners for edit and delete buttons
         holder.editButton.setOnClickListener { editTask(task) }
         holder.deleteButton.setOnClickListener { deleteTask(task) }
     }
 
     override fun getItemCount() = tasks.size
 
+    private fun loadElapsedTimeFromPreferences(taskId: Long): Long {
+        return sharedPreferences.getLong("elapsedTime_$taskId", 0)
+    }
+
     private fun formatElapsedTime(time: Long): String {
         val seconds = (time / 1000).toInt()
         val minutes = seconds / 60
-        val displaySeconds = seconds % 60
-        return String.format("%02d:%02d", minutes, displaySeconds)
+        val hours = minutes / 60
+        return String.format("%02d:%02d:%02d", hours, minutes % 60, seconds % 60)
     }
 }

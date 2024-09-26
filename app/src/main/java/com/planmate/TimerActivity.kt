@@ -112,10 +112,11 @@ class TimerActivity : AppCompatActivity() {
 
     private fun stopTimer() {
         isRunning = false
-        startButton.text = getString(R.string.stop_timer)
+        startButton.text = getString(R.string.start_timer)
 
-        totalElapsedTime += elapsedTime
-        saveElapsedTimeToPreferences(taskId, totalElapsedTime)
+        // Accumulate elapsed time
+        totalElapsedTime += elapsedTime // Add current elapsed time to total
+        saveElapsedTimeToPreferences(taskId, totalElapsedTime) // Save the updated total time
         updateTotalTimeText()
 
         elapsedTime = 0
@@ -131,6 +132,7 @@ class TimerActivity : AppCompatActivity() {
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
+
 
     private fun updateTimerText() {
         timerTextView.text = formatElapsedTime(elapsedTime)
