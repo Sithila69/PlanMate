@@ -179,6 +179,7 @@ class MainActivity : AppCompatActivity() {
             putExtra("taskId", task.id) // Pass the task ID to TimerActivity
             putExtra("taskTitle", task.title) // Pass the task title
             putExtra("taskDescription", task.description) // Pass the task description
+            putExtra("dueDate",task.dueDate)
         }
         timerActivityResultLauncher.launch(intent) // Launch TimerActivity
     }
