@@ -1,110 +1,115 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:background="@color/white">
 
-    <LinearLayout
+    <!-- Left Side: Input Fields -->
+<LinearLayout
+android:layout_width="0dp"
+android:layout_height="match_parent"
+android:layout_weight="1"
+android:orientation="vertical">
+
+<!-- App Title -->
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/app_name"
+    android:textSize="24sp"
+    android:textStyle="bold"
+    android:textColor="@color/dark_brown"
+    android:layout_marginBottom="16dp" />
+
+<!-- Task Title -->
+<com.google.android.material.textfield.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="@string/enter_task_title"
+    android:layout_marginBottom="4dp"
+    app:hintTextColor="@color/black"
+    app:boxStrokeColor="@color/black">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/taskTitleInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:baselineAligned="false"
-        android:background="?android:attr/windowBackground">
+        android:inputType="text"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/soft_peach" />
+</com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Left column -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:orientation="vertical"
-            android:layout_marginEnd="16dp">
+<!-- Task Description -->
+<com.google.android.material.textfield.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="@string/enter_task_description"
+    android:layout_marginBottom="8dp"
+    app:hintTextColor="@color/black"
+    app:boxStrokeColor="@color/black">
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/taskDescriptionInput"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:inputType="textMultiLine"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/soft_peach" />
+</com.google.android.material.textfield.TextInputLayout>
 
-            <!-- App Title -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp" />
+<!-- Date Picker for Task Due Date -->
+<com.google.android.material.textfield.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:hint="@string/select_due_date"
+    app:hintTextColor="@color/black"
+    app:boxStrokeColor="@color/black">
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/dueDateInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:clickable="true"
+        android:inputType="none"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/soft_peach" />
+</com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Task Title -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_task_title"
-                android:layout_marginBottom="8dp">
+<!-- Button to Add Task -->
+<com.google.android.material.button.MaterialButton
+    android:id="@+id/addTaskButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/add_task"
+    app:cornerRadius="8dp"
+    style="@style/Widget.MaterialComponents.Button"
+    android:backgroundTint="@color/black"
+    android:textColor="@color/white"
+    android:layout_gravity="center" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/taskTitleInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>
 
-            <!-- Task Description -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_task_description"
-                android:layout_marginBottom="16dp">
+    <!-- Right Side: RecyclerView to Display Tasks -->
+<androidx.recyclerview.widget.RecyclerView
+android:id="@+id/taskListView"
+android:layout_width="0dp"
+android:layout_height="match_parent"
+android:layout_weight="2"
+android:clipToPadding="false"
+android:paddingTop="8dp"
+android:backgroundTint="@color/soft_peach" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/taskDescriptionInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="100dp"
-                    android:inputType="textMultiLine" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Date Picker for Task Due Date -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:hint="@string/select_due_date">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/dueDateInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:inputType="none" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Button to Add Task -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/addTaskButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/add_task"
-                app:cornerRadius="8dp"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_gravity="center" />
-
-        </LinearLayout>
-
-        <!-- Right column (expanded RecyclerView for landscape) -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp">
-
-            <!-- RecyclerView to Display Tasks -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/taskListView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:paddingTop="8dp" />
-
-        </LinearLayout>
+    <!-- No Tasks Text View -->
+<TextView
+android:id="@+id/noTasksTextView"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="@string/no_tasks_available"
+android:textColor="@color/dark_brown"
+android:visibility="gone"
+android:gravity="center" />
 
     </LinearLayout>
-</ScrollView>
