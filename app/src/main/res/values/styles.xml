@@ -1,12 +1,9 @@
-<resources>
-
-    <style name="Widget.PlanMate.AppWidget.Container" parent="android:Widget">
-        <item name="android:id">@android:id/background</item>
-        <item name="android:background">?android:attr/colorBackground</item>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.PlanMate" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
-    <style name="Widget.PlanMate.AppWidget.InnerView" parent="android:Widget">
-        <item name="android:background">?android:attr/colorBackground</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-    </style>
+    <style name="Theme.PlanMate" parent="Base.Theme.PlanMate" />
 </resources>
