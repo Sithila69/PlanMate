@@ -28,4 +28,5 @@
     <string name="hh_mm_ss">HH:MM:SS</string>
     <string name="due_date">Due Date:</string>
     <string name="_00_00_00">00:00:00</string>
+    <string name="stop_alarm">Stop Alarm</string>
 </resources>
