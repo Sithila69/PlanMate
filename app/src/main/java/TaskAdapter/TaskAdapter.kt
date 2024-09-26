@@ -1,6 +1,7 @@
 package com.planmate
 
 import Task
+import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -54,7 +55,7 @@ class TaskAdapter(
         holder.elapsedTime.text = formatElapsedTime(totalElapsedTime)
 
         holder.editButton.setOnClickListener { editTask(task) }
-        holder.deleteButton.setOnClickListener { deleteTask(task) }
+        holder.deleteButton.setOnClickListener { showDeleteConfirmationDialog(task) }
     }
 
     override fun getItemCount() = tasks.size
@@ -68,5 +69,16 @@ class TaskAdapter(
         val minutes = seconds / 60
         val hours = minutes / 60
         return String.format("%02d:%02d:%02d", hours, minutes % 60, seconds % 60)
+    }
+
+    private fun showDeleteConfirmationDialog(task: Task) {
+        AlertDialog.Builder(context)
+            .setTitle("Delete Task")
+            .setMessage("This Cannot be Undone")
+            .setPositiveButton("Delete") { _, _ ->
+                deleteTask(task)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }
