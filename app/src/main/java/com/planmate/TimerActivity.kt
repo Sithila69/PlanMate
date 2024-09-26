@@ -34,6 +34,7 @@ class TimerActivity : AppCompatActivity() {
     private lateinit var totalTimeTextView: TextView
     private lateinit var timerTextView: TextView
     private lateinit var taskDescriptionTextView: TextView
+    private lateinit var dueDateTextView:TextView
     private lateinit var setReminderButton: Button
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
@@ -64,6 +65,7 @@ class TimerActivity : AppCompatActivity() {
 
         taskTitleTextView = findViewById(R.id.taskTitleTextView)
         taskDescriptionTextView = findViewById(R.id.taskDescriptionTextView)
+        dueDateTextView = findViewById(R.id.dueDate)
         startButton = findViewById(R.id.startButton)
         totalTimeTextView = findViewById(R.id.totalTimeTextView)
         timerTextView = findViewById(R.id.timerTextView)
@@ -72,9 +74,10 @@ class TimerActivity : AppCompatActivity() {
         taskId = intent.getLongExtra("taskId", 0)
         val taskTitle = intent.getStringExtra("taskTitle") ?: "Task Title"
         val taskDescription = intent.getStringExtra("taskDescription") ?: "Task Description"
-
+        val dueDate = intent.getStringExtra("dueDate")?:"dueDate"
         taskTitleTextView.text = taskTitle
         taskDescriptionTextView.text = taskDescription
+        dueDateTextView.text = dueDate
 
         sharedPreferences = getSharedPreferences("TaskPrefs", MODE_PRIVATE)
         editor = sharedPreferences.edit()

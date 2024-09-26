@@ -25,4 +25,7 @@
     <string name="total_time_code">Total time: %1$s</string>
     <string name="stop_timer">Stop Timer</string>
     <string name="total_time_2">Total time: %1$s</string>
+    <string name="hh_mm_ss">HH:MM:SS</string>
+    <string name="due_date">Due Date:</string>
+    <string name="_00_00_00">00:00:00</string>
 </resources>
